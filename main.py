@@ -107,15 +107,15 @@ def main():
     ''' 
     train_loader, val_loader = dataP.load_data()
     # get model
-    model = torch.hub.load('zhanghang1989/ResNeSt', 'resnest50', pretrained=True)
+    model = torch.hub.load('zhanghang1989/ResNeSt', 'resnest200', pretrained=True)
     model.conv1 = nn.Sequential(
-          nn.Conv2d(2, 32, kernel_size=3, stride=2, padding=1,bias=False),
-          nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+          nn.Conv2d(2, 64, kernel_size=3, stride=2, padding=1,bias=False),
+          nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
           nn.ReLU(inplace=True),
-          nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1, bias=False),
-          nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+          nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1, bias=False),
+          nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
           nn.ReLU(inplace=True),
-          nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, bias=False)
+          nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1, bias=False)
         )
     model.cuda()
     # choose loss func,default is CE

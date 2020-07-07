@@ -27,13 +27,13 @@ def read_fits(path):
 
         hdul1 = fits.open(image_file_c)
         hdul1.verify('silentfix')
-        scaled_img_c = transform.resize(hdul1[1].data, (224, 224))
+        scaled_img_c = transform.resize(hdul1[1].data, (320, 320))
         temp_list.append(scaled_img_c)
         hdul1.close()
 
         hdul2 = fits.open(image_file_m)
         hdul2.verify('silentfix')
-        scaled_img_m = transform.resize(hdul2[1].data, (224, 224))
+        scaled_img_m = transform.resize(hdul2[1].data, (320, 320))
         temp_list.append(scaled_img_m)
         hdul2.close()
 
@@ -48,23 +48,23 @@ def read_fits(path):
 
 classes = ['alpha','beta','betax']
 transforms=transforms.Compose([
-            transforms.Resize(224),
-            transforms.CenterCrop(224),
+            transforms.Resize(320),
+            transforms.CenterCrop(320),
             transforms.ToTensor(),
             transforms.Normalize([0.5, 0.5], [0.5, 0.5])])
 cpk_filename = configs.checkpoints + os.sep + configs.model_name + "-checkpoint.pth.tar"
 best_cpk = cpk_filename.replace("-checkpoint.pth.tar","-best_model.pth.tar")
 checkpoint = torch.load(best_cpk)
 cudnn.benchmark = True
-net = torch.hub.load('zhanghang1989/ResNeSt', 'resnest50', pretrained=True)
+net = torch.hub.load('zhanghang1989/ResNeSt', 'resnest200', pretrained=True)
 net.conv1 = nn.Sequential(
-          nn.Conv2d(2, 32, kernel_size=3, stride=2, padding=1,bias=False),
-          nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+          nn.Conv2d(2, 64, kernel_size=3, stride=2, padding=1,bias=False),
+          nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
           nn.ReLU(inplace=True),
-          nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1, bias=False),
-          nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+          nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1, bias=False),
+          nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
           nn.ReLU(inplace=True),
-          nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1, bias=False)
+          nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1, bias=False)
         )
 net.cuda()
 net.load_state_dict(checkpoint['state_dict'])
